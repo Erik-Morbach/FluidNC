@@ -19,6 +19,8 @@
 #include "../Stepper.h"
 #include "../Logging.h"
 #include "../Config.h"
+#include "../ExternalModule.h"
+#include "../I2CBus.h"
 #include "Axes.h"
 #include "SPIBus.h"
 #include "I2SOBus.h"
@@ -55,18 +57,20 @@ namespace Machine {
     public:
         MachineConfig() = default;
 
-        Axes*            _axes        = nullptr;
-        Kinematics*      _kinematics  = nullptr;
-        SPIBus*          _spi         = nullptr;
-        I2SOBus*         _i2so        = nullptr;
-        Stepping*        _stepping    = nullptr;
-        CoolantControl*  _coolant     = nullptr;
-        Probe*           _probe       = nullptr;
-        Control*         _control     = nullptr;
-        UserOutputs*     _userOutputs = nullptr;
-        SDCard*          _sdCard      = nullptr;
-        Macros*          _macros      = nullptr;
-        Start*           _start       = nullptr;
+        Axes*            _axes            = nullptr;
+        Kinematics*      _kinematics      = nullptr;
+        SPIBus*          _spi             = nullptr;
+        I2SOBus*         _i2so            = nullptr;
+        I2CBus*          _i2c             = nullptr;
+        ExternalModule*  _external_module = nullptr;
+        Stepping*        _stepping        = nullptr;
+        CoolantControl*  _coolant         = nullptr;
+        Probe*           _probe           = nullptr;
+        Control*         _control         = nullptr;
+        UserOutputs*     _userOutputs     = nullptr;
+        SDCard*          _sdCard          = nullptr;
+        Macros*          _macros          = nullptr;
+        Start*           _start           = nullptr;
         Spindles::SpindleList _spindles;
 
         float _arcTolerance      = 0.002f;

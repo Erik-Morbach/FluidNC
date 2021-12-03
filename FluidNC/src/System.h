@@ -62,6 +62,7 @@ enum class Override : uint8_t {
 struct system_t {
     volatile State state;              // Tracks the current system state
     bool           abort;              // System abort flag. Forces exit back to main loop for reset.
+    bool           must_repeat;        // System find M47/M48 valid line and need to repeat
     Suspend        suspend;            // System suspend bitflag variable that manages holds, cancels, and safety door.
     StepControl    step_control;       // Governs the step segment generator depending on system state.
     Percent        f_override;         // Feed rate override value in percent

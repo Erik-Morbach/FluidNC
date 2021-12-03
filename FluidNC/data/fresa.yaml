@@ -1,0 +1,141 @@
+name: "BJM Dev Fresa"
+board: "BJM_ESMOD_V1.0"
+
+stepping:
+  engine: RMT
+  idle_ms: 10
+  dir_delay_us: 1
+  pulse_us: 3
+  disable_delay_us: 0
+
+axes:
+  shared_stepper_disable_pin: NO_PIN
+  
+  x:
+    steps_per_mm: 200
+    max_rate_mm_per_min: 20000
+    acceleration_mm_per_sec2: 2000.000
+    max_travel_mm: 327
+    soft_limits: false
+
+    homing:
+      cycle: 2
+      mpos_mm: 0
+      positive_direction: false
+    
+    motor0:
+      limit_all_pin: gpio.35:low
+      stepstick:
+        direction_pin: gpio.14
+        step_pin: gpio.17
+    motor1:
+      null_motor:
+
+  y:
+    steps_per_mm: 200
+    max_rate_mm_per_min: 20000
+    acceleration_mm_per_sec2: 2000.000
+    max_travel_mm: 420
+    soft_limits: false
+
+    homing:
+      cycle: 2
+      mpos_mm: 0
+      positive_direction: false
+
+    motor0:
+      limit_all_pin: gpio.34:low
+      stepstick:
+        direction_pin: gpio.2
+        step_pin: gpio.16
+    motor1:
+      null_motor:
+
+  z:
+    steps_per_mm: 200
+    max_rate_mm_per_min: 20000
+    acceleration_mm_per_sec2: 2000.000
+    max_travel_mm: 111
+    soft_limits: false
+
+    homing:
+      cycle: 2
+      mpos_mm: 0
+      positive_direction: true
+
+    motor0:
+      limit_all_pin: gpio.33:low
+      stepstick:
+        direction_pin: gpio.4
+        step_pin: gpio.15
+    motor1:
+      null_motor:
+
+control:
+  safety_door_pin: NO_PIN
+  macro0_pin: NO_PIN
+  macro1_pin: NO_PIN
+  macro2_pin: NO_PIN
+  macro3_pin: NO_PIN
+
+
+macros:
+  startup_line0:
+  startup_line1:
+  macro0:
+  macro1:
+  macro2:
+  macro3:
+
+user_outputs:
+  analog0_pin: NO_PIN
+  analog1_pin: NO_PIN
+  analog2_pin: NO_PIN
+  analog3_pin: NO_PIN
+  analog0_hz: 5000
+  analog1_hz: 5000
+  analog2_hz: 5000
+  analog3_hz: 5000
+  digital0_pin: gpio.25
+  digital1_pin: NO_PIN
+  digital2_pin: NO_PIN
+  digital3_pin: NO_PIN
+
+start:
+  must_home: false
+
+spi:
+  miso_pin: gpio.19
+  mosi_pin: gpio.23
+  sck_pin: gpio.18
+
+sdcard:
+  cs_pin: gpio.5
+
+i2c:
+  sda: gpio.0
+  scl: gpio.22
+  frequency: 100000
+
+external_module:
+  type: "i2c"
+
+  device:
+    id: 0x001
+    name: "panel"
+    address: 0x001
+    quantity: 1
+    element_type: "digital"
+    rw: write
+    timeout: 1
+
+PWM:
+  pwm_hz: 5000
+  output_pin: NO_PIN
+  direction_pin: NO_PIN
+  disable_with_s0: false
+  s0_with_disable: true
+  spinup_ms: 1000
+  spindown_ms: 1000
+  tool_num: 0
+  speed_map: 0=0.000% 1000=100.000%

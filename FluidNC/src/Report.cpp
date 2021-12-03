@@ -324,6 +324,11 @@ void report_gcode_modes(Print& channel) {
         case ProgramFlow::CompletedM30:
             mode = " M30";
             break;
+        case ProgramFlow::RepeatAlways:
+            mode = " M47";
+            break;
+        case ProgramFlow::RepeatTimes:
+            mode = " M48";
     }
     channel << mode;
 

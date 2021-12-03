@@ -537,6 +537,18 @@ Error gc_execute_line(char* line, Channel& channel) {
                         }
                         mg_word_bit = ModalGroup::MM8;
                         break;
+                    case 47:
+                    case 48:
+                        switch(int_value){
+                            case 47:
+                                gc_block.modal.program_flow = ProgramFlow::RepeatAlways;
+                                break;
+                            case 48:
+                                gc_block.modal.program_flow = ProgramFlow::RepeatTimes;
+                                break;
+                        }
+                        mg_word_bit = ModalGroup::MM4;
+                        break;
                     case 56:
                         if (config->_enableParkingOverrideControl) {
                             gc_block.modal.override = Override::ParkingMotion;
@@ -835,7 +847,7 @@ Error gc_execute_line(char* line, Channel& channel) {
             }
         }
     }
-    // [10. Dwell ]: P value missing. P is negative (done.) NOTE: See below.
+    // [10. Dwell/Repeat ]: P value missing. P is negative (done.) NOTE: See below.
     if (gc_block.non_modal_command == NonModal::Dwell) {
         if (bitnum_is_false(value_words, GCodeWord::P)) {
             FAIL(Error::GcodeValueWordMissing);  // [P word missing]
@@ -855,6 +867,11 @@ Error gc_execute_line(char* line, Channel& channel) {
         }
         clear_bitnum(value_words, GCodeWord::E);
         clear_bitnum(value_words, GCodeWord::Q);
+    }
+    if (gc_block.modal.program_flow == ProgramFlow::RepeatTimes){
+        if (bitnum_is_false(value_words, GCodeWord::P)){
+            FAIL(Error::GcodeValueWordMissing);
+        }
     }
     // [11. Set active plane ]: N/A
     switch (gc_block.modal.plane_select) {
@@ -1605,6 +1622,13 @@ Error gc_execute_line(char* line, Channel& channel) {
                 protocol_execute_realtime();  // Execute suspend.
             }
             break;
+        case ProgramFlow::RepeatTimes:
+            gc_state.times_already_repeated += 1;
+            if(gc_state.times_already_repeated>=gc_block.values.p){
+                gc_state.times_already_repeated = 0;
+                gc_state.modal.program_flow = ProgramFlow::CompletedM30;
+            }
+        case ProgramFlow::RepeatAlways:
         case ProgramFlow::CompletedM2:
         case ProgramFlow::CompletedM30:
             protocol_buffer_synchronize();  // Sync and finish all remaining buffered motions before moving on.
@@ -1635,6 +1659,13 @@ Error gc_execute_line(char* line, Channel& channel) {
                 sys.r_override        = RapidOverride::Default;
                 sys.spindle_speed_ovr = SpindleSpeedOverride::Default;
             }
+            bool isRepeatable = gc_state.modal.program_flow==ProgramFlow::RepeatAlways ||
+                                gc_state.modal.program_flow==ProgramFlow::RepeatTimes;
+            if(sys.state != State::CheckMode && isRepeatable){
+                sys.must_repeat = true;
+                break;
+            }
+            else sys.must_repeat = false;
 
             // Execute coordinate change and spindle/coolant stop.
             if (sys.state != State::CheckMode) {

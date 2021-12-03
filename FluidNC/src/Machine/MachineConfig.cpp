@@ -39,6 +39,8 @@ namespace Machine {
         handler.section("axes", _axes);
         handler.section("kinematics", _kinematics);
         handler.section("i2so", _i2so);
+        handler.section("i2c", _i2c);
+        handler.section("external_module", _external_module);
         handler.section("spi", _spi);
         handler.section("sdcard", _sdCard);
         handler.section("control", _control);
@@ -280,6 +282,8 @@ namespace Machine {
     MachineConfig::~MachineConfig() {
         delete _axes;
         delete _i2so;
+        delete _i2c;
+        delete _external_module;
         delete _coolant;
         delete _probe;
         delete _sdCard;

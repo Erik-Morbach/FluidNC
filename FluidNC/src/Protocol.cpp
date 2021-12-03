@@ -164,6 +164,8 @@ void protocol_main_loop() {
         // Poll the input sources waiting for a complete line to arrive
         Channel* chan = nullptr;
         char     line[Channel::maxLine];
+        String   fileFs;
+        String   filePath;
         while (true) {
             protocol_execute_realtime();  // Runtime command check point.
             if (sys.abort) {
@@ -179,10 +181,16 @@ void protocol_main_loop() {
                         case Error::Ok:
                             break;
                         case Error::Eof:
-                            _notifyf("File job done", "%s file job succeeded", infile->path());
-                            out << "[MSG:" << infile->path() << " file job succeeded]\n";
+                            filePath = infile->path();
+                            fileFs = (filePath.startsWith("/sd")?"SD":"LocalFS");
+                            _notifyf("File job done", "%s file job succeeded", filePath);
+                            out << "[MSG:" << filePath << " file job succeeded]\n";
                             delete infile;
                             infile = nullptr;
+                            if (sys.must_repeat){
+                                sys.must_repeat = 0;
+                                sprintf(line,"$%s/Run=%s\n",fileFs.c_str(),filePath.c_str());
+                            }
                             break;
                         default:
                             out << "[MSG: ERR:" << static_cast<int>(err) << " (" << errorString(err) << ") in " << infile->path()
